@@ -1,11 +1,11 @@
-# NBA-Bot-Telegram
-
-**Lista de comandos**
--/comandos: lista de comandos.
--/este: Ranking conferencia este.
--/oeste: Ranking conferencia oeste.
--/triples: Ranking de triples.
--/robos: Ranking de robos.
--/puntos: Ranking de puntos.
--/tapones: Ranking de tapones.
--/asistencias: Ranking de asistencias.
+  **NBA BOT Telegram**
+  
+  -/help: Ver lista de comandos.
+  
+  -/este: Ver clasificación conferencia este.
+  
+  -/oeste: Ver clasificación conferencia oeste.
+  
+  -/stats: Ver ranking de estadísticas.
+  
+  -/partidos: Ver los partidos.
