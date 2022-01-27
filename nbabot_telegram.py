@@ -6,12 +6,52 @@ import pandas as pd
 from tabulate import tabulate
 import numpy as np
 
-def commands(update, context):
-        comandos = "/comandos: lista de comandos\n/este: Ranking conferencia este\n"+\
-        "/oeste: Ranking conferencia oeste\n/triples: Ranking de triples\n"+\
-        "/robos: Ranking de robos \n/puntos: Ranking de puntos\n"+\
-        "/tapones: Ranking de tapones\n/asistencias: Ranking de asistencias"
+def help(update, context):
+        comandos = "/help: lista de comandos\n/este: Ranking conferencia este\n"+\
+        "/oeste: Ranking conferencia oeste\n/stats: Ranking de estadísticas"+\
+        "/partidos: Ver los siguientes partidos"
+
         update.message.reply_text(comandos)
+
+def get_games():
+        url = 'https://www.movistarplus.es/nba/horarios'
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        all_games_soup = soup.find_all('div',class_='title-team')
+
+        all_games_list = list()
+
+        for i in all_games_soup:
+                all_games_list.append(i.text)
+
+        
+        return all_games_list
+
+def get_games_dates():
+        url = 'https://www.movistarplus.es/nba/horarios'
+        page = requests.get(url)
+        soup = BeautifulSoup(page.content, 'html.parser')
+
+        all_games_dates_soup = soup.find_all('div',class_='fecha-calendar')
+
+        all_games_dates_list = list()
+
+        for i in all_games_dates_soup:
+                all_games_dates_list.append(i.text)
+
+        return all_games_dates_list
+
+def games(update,context):
+        games = get_games()
+        date = get_games_dates()
+
+        super_string = ""
+
+        for i in range (len(games)):
+                super_string += "⏰Horario: "+str(date[i])+"\n🏀Partido:"+str(games[i])+"\n"
+
+        update.message.reply_text(super_string)
 
 
 def get_ranking_teams():
@@ -258,7 +298,7 @@ def get_players_stats():
         return all_stats
 
 
-def assists(update, context):
+def assists():
         
         #Solo guardaremos los 10 primeros, ya que son los pertenecientes a asistencias
         players_list = get_players_list()[:10]
@@ -283,13 +323,13 @@ def assists(update, context):
 
                 super_string += str(i+1)+"."+players_list[i]+medal+"->"+assists_list[i]+"\n"
         
-        update.message.reply_text(super_string)
+        return super_string
 
         
 
 
 
-def blocks(update, context):
+def blocks():
         
         #Solo guardaremos del 10 al 20 ya que son los pertenecientes a tapones
         players_list = get_players_list()[10:20]
@@ -314,11 +354,11 @@ def blocks(update, context):
 
                 super_string += str(i+1)+"."+players_list[i]+medal+"->"+blocks_list[i]+"\n"
         
-        update.message.reply_text(super_string)
+        return super_string
 
 
 
-def points(update, context):
+def points():
         
         #Solo guardaremos del 20 al 30 ya que son los pertenecientes a puntos
         players_list = get_players_list()[20:30]
@@ -343,9 +383,9 @@ def points(update, context):
 
                 super_string += str(i+1)+"."+players_list[i]+medal+"->"+points_list[i]+"\n"
         
-        update.message.reply_text(super_string)
+        return super_string
 
-def triples(update, context):
+def triples():
         
         #Solo guardaremos del 30 al 40 ya que son los pertenecientes a triples
         players_list = get_players_list()[30:40]
@@ -370,9 +410,9 @@ def triples(update, context):
 
                 super_string += str(i+1)+"."+players_list[i]+medal+"->"+triples_list[i]+"\n"
         
-        update.message.reply_text(super_string)
+        return super_string
 
-def rebounds(update, context):
+def rebounds():
         
         #Solo guardaremos del 40 al 50 ya que son los pertenecientes a rebotes
         players_list = get_players_list()[40:50]
@@ -397,10 +437,10 @@ def rebounds(update, context):
 
                 super_string += str(i+1)+"."+players_list[i]+medal+"->"+rebounds_list[i]+"\n"
         
-        update.message.reply_text(super_string)
+        return super_string
 
 
-def steals(update, context):
+def steals():
         
         #Solo guardaremos del 40 al 50 ya que son los pertenecientes a robos
         players_list = get_players_list()[50:60]
@@ -425,6 +465,18 @@ def steals(update, context):
 
                 super_string += str(i+1)+"."+players_list[i]+medal+"->"+steals_list[i]+"\n"
         
+        return super_string
+
+
+def stats(update,context):
+        super_string = ""
+        super_string += assists() + "\n"
+        super_string += blocks() + "\n"
+        super_string += points() + "\n"
+        super_string += triples() + "\n"
+        super_string += rebounds() + "\n"
+        super_string += steals()
+
         update.message.reply_text(super_string)
 
 
@@ -434,15 +486,11 @@ if __name__ == '__main__':
 
    dp = updater.dispatcher
 
-   dp.add_handler(CommandHandler('comandos',commands))
+   dp.add_handler(CommandHandler('help',help))
    dp.add_handler(CommandHandler('este',east))
    dp.add_handler(CommandHandler('oeste',west))
-   dp.add_handler(CommandHandler('triples',triples))
-   dp.add_handler(CommandHandler('robos',steals))
-   dp.add_handler(CommandHandler('rebotes',rebounds))
-   dp.add_handler(CommandHandler('puntos',points))
-   dp.add_handler(CommandHandler('tapones',blocks))
-   dp.add_handler(CommandHandler('asistencias',assists))
+   dp.add_handler(CommandHandler('stats',stats))
+   dp.add_handler(CommandHandler('partidos',games))
    
 
    #add handler
