@@ -482,7 +482,7 @@ def stats(update,context):
 
 if __name__ == '__main__':
    
-   updater = Updater(token='5202585668:AAFU4T9b7T18zJv5QIyfEtDyCuRjH-62KQ0', use_context=True)
+   updater = Updater(token='TOKEN', use_context=True)
 
    dp = updater.dispatcher
 
